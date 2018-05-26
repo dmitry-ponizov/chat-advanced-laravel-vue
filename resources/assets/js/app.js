@@ -21,11 +21,15 @@ Vue.use(Autocomplete)
  */
 Vue.component('conversation-form', require('./components/forms/ConversationForm.vue'));
 Vue.component('conversation-reply-form', require('./components/forms/ConversationReplyForm.vue'));
+Vue.component('conversation-add-user-form', require('./components/forms/ConversationAddUserForm.vue'));
 Vue.component('conversation-dashboard', require('./components/ConversationDashboard.vue'));
 Vue.component('conversations', require('./components/Conversations.vue'));
 Vue.component('conversation', require('./components/Conversation.vue'));
 Vue.component('autocomplete', require('./components/Autocomplete.vue'));
 Vue.component('item-template', require('./components/AutocompleteItem.vue'));
+Vue.component('message-area', require('./components/forms/MessageArea.vue'));
+
+
 import store from './store/index'
 
 const app = new Vue({

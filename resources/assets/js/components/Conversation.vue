@@ -10,6 +10,7 @@
                 <li class="list-inline-item"><strong>In conversation:</strong></li>
                 <li class="list-inline-item" v-for="user in conversation.users.data">{{ user.name }}</li>
             </ul>
+            <conversation-add-user-form />
             <hr>
             <conversation-reply-form />
             <hr>
@@ -18,7 +19,7 @@
                     <img :src="reply.user.data.avatar" :alt="reply.user.data.name + 'avatar'">
                 </div>
                 <div class="media-body mt-3">
-                    <p>{{ reply.user.data.name }} &bull; {{ reply.user.created_at}} </p>
+                    <p>{{ reply.user.data.name }} &bull; {{ reply.created_at_human}} </p>
                     <div class="card">
                         <div class="card-body">
                             {{ reply.body }}

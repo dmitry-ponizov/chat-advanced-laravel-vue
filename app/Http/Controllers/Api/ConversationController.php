@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Conversation;
-use App\Http\Requests\StoreConversationRequest;
-use App\Transformers\ConversationTransformer;
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Transformers\ConversationTransformer;
+use App\Http\Requests\StoreConversationRequest;
+use App\Events\ConversationCreated;
 
 class ConversationController extends Controller
 {
@@ -29,10 +29,7 @@ class ConversationController extends Controller
 
     public function show(Conversation $conversation)
     {
-        try {
-            $this->authorize('show', $conversation);
-        } catch (AuthorizationException $e) {
-        }
+        $this->authorize('show', $conversation);
 
         if ($conversation->isReply()) {
             abort(404);
@@ -40,7 +37,7 @@ class ConversationController extends Controller
 
         return fractal()
             ->item($conversation)
-            ->parseIncludes(['user', 'users','replies','replies.user'])
+            ->parseIncludes(['user', 'users', 'replies', 'replies.user'])
             ->transformWith(new ConversationTransformer)
             ->toArray();
     }
@@ -51,11 +48,21 @@ class ConversationController extends Controller
         $conversation->body = $request->body;
         $conversation->user()->associate($request->user());
         $conversation->save();
+
         $conversation->touchLastReply();
+
         $conversation->users()->sync(array_unique(
-            array_merge($request->recipients,[$request->user()->id])
+            array_merge($request->recipients, [$request->user()->id])
         ));
+
+        $conversation->load('users');
+
+        broadcast(new ConversationCreated($conversation))->toOthers();
+
+        return fractal()
+            ->item($conversation)
+            ->parseIncludes(['user', 'users', 'replies', 'replies.user'])
+            ->transformWith(new ConversationTransformer)
+            ->toArray();
     }
-
-
 }

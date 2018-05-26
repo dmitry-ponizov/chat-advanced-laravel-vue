@@ -14,7 +14,10 @@
                     </p>
                     <ul class="list-inline">
                         <li>
-                            <img :src="user.avatar" :title="user.name" v-for="user in conversation.users.data" alt="">
+                            <slot v-if="!!conversation.users" >
+                            <img :src="user.avatar" :title="user.name" :alt="user.name + ' avatar'" v-for="user in conversation.users.data">
+                            </slot>
+
                         </li>
                         <li>
                             Last reply {{ conversation.last_reply_human }}
